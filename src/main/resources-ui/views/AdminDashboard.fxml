@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.location.voitures.controllers.AdminDashboardController">
+   <top>
+      <HBox alignment="CENTER_LEFT" spacing="20.0" style="-fx-background-color: #34495e; -fx-padding: 15;">
+         <Label style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;" text="⚙️ Administration" />
+      </HBox>
+   </top>
+   
+   <left>
+      <VBox spacing="10.0" style="-fx-background-color: #ecf0f1; -fx-padding: 20;" prefWidth="200.0">
+         <Button fx:id="gestionVoituresBtn" onAction="#showGestionVoitures" prefWidth="160.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 14px;" text="Gestion Voitures" />
+         <Button fx:id="gestionUsersBtn" prefWidth="160.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 14px;" text="Gestion Utilisateurs" />
+         <Button fx:id="reservationsBtn" prefWidth="160.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 14px;" text="Réservations" />
+      </VBox>
+   </left>
+   
+   <center>
+      <VBox fx:id="mainContent" spacing="20.0" style="-fx-padding: 20;">
+         
+         <!-- Formulaire d'ajout de voiture -->
+         <VBox spacing="15.0" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
+            <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Ajouter une voiture" />
+            
+            <HBox spacing="15.0">
+               <VBox spacing="5.0">
+                  <Label text="Marque :" />
+                  <TextField fx:id="marqueField" prefWidth="150.0" />
+               </VBox>
+               <VBox spacing="5.0">
+                  <Label text="Modèle :" />
+                  <TextField fx:id="modeleField" prefWidth="150.0" />
+               </VBox>
+               <VBox spacing="5.0">
+                  <Label text="Année :" />
+                  <TextField fx:id="anneeField" prefWidth="100.0" />
+               </VBox>
+            </HBox>
+            
+            <HBox spacing="15.0">
+               <VBox spacing="5.0">
+                  <Label text="Immatriculation :" />
+                  <TextField fx:id="immatriculationField" prefWidth="150.0" />
+               </VBox>
+               <VBox spacing="5.0">
+                  <Label text="Prix/jour (€) :" />
+                  <TextField fx:id="prixField" prefWidth="100.0" />
+               </VBox>
+               <VBox spacing="5.0">
+                  <Label text="Image :" />
+                  <HBox spacing="10.0" alignment="CENTER_LEFT">
+                     <TextField fx:id="imagePathField" prefWidth="200.0" editable="false" />
+                     <Button fx:id="selectImageBtn" onAction="#selectImage" text="Choisir..." />
+                  </HBox>
+               </VBox>
+            </HBox>
+            
+            <HBox spacing="10.0">
+               <Button fx:id="ajouterBtn" onAction="#ajouterVoiture" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-padding: 10 20;" text="Ajouter" />
+               <Button fx:id="modifierBtn" onAction="#modifierVoiture" style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-padding: 10 20;" text="Modifier" />
+               <Button fx:id="supprimerBtn" onAction="#supprimerVoiture" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 10 20;" text="Supprimer" />
+            </HBox>
+         </VBox>
+         
+         <!-- Tableau des voitures -->
+         <TableView fx:id="voituresTable" prefHeight="400.0">
+            <columns>
+               <TableColumn fx:id="idCol" text="ID" prefWidth="50.0" />
+               <TableColumn fx:id="marqueCol" text="Marque" prefWidth="100.0" />
+               <TableColumn fx:id="modeleCol" text="Modèle" prefWidth="100.0" />
+               <TableColumn fx:id="anneeCol" text="Année" prefWidth="80.0" />
+               <TableColumn fx:id="immatriculationCol" text="Immatriculation" prefWidth="120.0" />
+               <TableColumn fx:id="prixCol" text="Prix/jour" prefWidth="80.0" />
+               <TableColumn fx:id="disponibleCol" text="Disponible" prefWidth="80.0" />
+               <TableColumn fx:id="imageCol" text="Image" prefWidth="100.0" />
+            </columns>
+         </TableView>
+         
+      </VBox>
+   </center>
+</BorderPane>

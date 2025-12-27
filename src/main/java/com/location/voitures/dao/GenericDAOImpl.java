@@ -83,8 +83,8 @@ public abstract class GenericDAOImpl<T, ID extends Serializable> implements Gene
     @Override
     public List<T> findAll() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            // CORRECTION 1 : Remplacer getSimpleName() par getName()
-            String hql = "FROM " + entityClass.getName();
+            // CORRECTION : Utiliser le nom simple de la classe pour HQL
+            String hql = "FROM " + entityClass.getSimpleName();
             return session.createQuery(hql, entityClass).list();
         }
     }
@@ -109,8 +109,8 @@ public abstract class GenericDAOImpl<T, ID extends Serializable> implements Gene
     @Override
     public List<T> findAllByAttribute(String attributeName, Object value) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            // CORRECTION 3 : Remplacer getSimpleName() par getName()
-            String hql = "FROM " + entityClass.getName() + " WHERE " + attributeName + " = :value";
+            // CORRECTION : Utiliser le nom simple de la classe pour HQL
+            String hql = "FROM " + entityClass.getSimpleName() + " WHERE " + attributeName + " = :value";
 
             Query<T> query = session.createQuery(hql, entityClass);
             query.setParameter("value", value);

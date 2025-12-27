@@ -16,6 +16,26 @@ public class ReservationDAO extends GenericDAOImpl<Reservation, Long> {
         super(Reservation.class);
     }
 
+    // Override findAll to load relations eagerly
+    @Override
+    public List<Reservation> findAll() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            // HQL with JOIN FETCH to load relations eagerly
+            String hql = "FROM Reservation r " +
+                         "LEFT JOIN FETCH r.voiture " +
+                         "LEFT JOIN FETCH r.utilisateur " +
+                         "ORDER BY r.id ASC";
+
+            Query<Reservation> query = session.createQuery(hql, Reservation.class);
+            return query.list();
+
+        } catch (Exception e) {
+            System.err.println("Erreur lors du chargement de toutes les réservations: " + e.getMessage());
+            e.printStackTrace();
+            return List.of();
+        }
+    }
+
     // Méthode cruciale: Recherche les réservations actives qui chevauchent la période donnée pour une voiture spécifique.
     public List<Reservation> findOverlappingReservations(Voiture voiture, LocalDateTime debut, LocalDateTime fin) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {

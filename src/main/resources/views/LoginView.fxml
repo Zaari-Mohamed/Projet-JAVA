@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.location.voitures.controllers.LoginController">
+   <center>
+      <VBox alignment="CENTER" spacing="20.0" style="-fx-background-color: #f8f9fa;">
+         <padding>
+            <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+         </padding>
+         
+         <VBox alignment="CENTER" maxWidth="400.0" spacing="25.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 15, 0, 0, 5);">
+            <padding>
+               <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+            </padding>
+            
+            <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="⚙️ Connexion Admin" />
+            
+            <VBox spacing="15.0">
+               <Label style="-fx-font-size: 14px; -fx-text-fill: #34495e;" text="Email :" />
+               <TextField fx:id="emailField" promptText="Entrez votre email" style="-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8;" />
+            </VBox>
+            
+            <VBox spacing="15.0">
+               <Label style="-fx-font-size: 14px; -fx-text-fill: #34495e;" text="Mot de passe :" />
+               <PasswordField fx:id="passwordField" promptText="Entrez votre mot de passe" style="-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8;" />
+            </VBox>
+            
+            <Button fx:id="loginButton" onAction="#handleLogin" prefWidth="200.0" style="-fx-background-color: linear-gradient(to right, #667eea, #764ba2); -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 25; -fx-padding: 12 20;" text="Se connecter" />
+         </VBox>
+      </VBox>
+   </center>
+</BorderPane>

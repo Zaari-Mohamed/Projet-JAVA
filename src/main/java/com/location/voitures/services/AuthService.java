@@ -30,13 +30,26 @@ public class AuthService {
     }
     
     public Optional<Admin> loginAdmin(String email, String password) {
-        // Utilise la connexion de base
-        Optional<Utilisateur> userOpt = login(email, password); 
-
-        // Vérifie si l'utilisateur est bien un Admin
-        if (userOpt.isPresent() && userOpt.get() instanceof Admin) {
-            return Optional.of((Admin) userOpt.get());
+        System.out.println("loginAdmin - email: " + email);
+        // Recherche directement l'utilisateur
+        Optional<Utilisateur> userOpt = utilisateurDAO.findByEmail(email);
+        System.out.println("Utilisateur trouvé: " + userOpt.isPresent());
+        
+        if (userOpt.isPresent()) {
+            Utilisateur user = userOpt.get();
+            System.out.println("Type utilisateur: " + user.getClass().getSimpleName());
+            System.out.println("Hash en base: " + user.getMotDePasseHashed());
+            
+            // Vérification du mot de passe
+            boolean passwordMatch = PasswordUtil.verifyPassword(password, user.getMotDePasseHashed());
+            System.out.println("Mot de passe correct: " + passwordMatch);
+            
+            if (passwordMatch && user instanceof Admin) {
+                System.out.println("Admin authentifié avec succès");
+                return Optional.of((Admin) user);
+            }
         }
+        System.out.println("Échec authentification admin");
         return Optional.empty();
     }
     
