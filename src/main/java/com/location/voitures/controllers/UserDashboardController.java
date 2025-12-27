@@ -14,19 +14,27 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 
 import java.util.List;
 
 public class UserDashboardController {
 
-    @FXML private VBox voituresContainer;
+    @FXML private FlowPane voituresContainer;
+    @FXML private Button refreshButton;
 
     private VoitureService voitureService;
 
     public void initialize() {
         System.out.println("UserDashboardController initialize() appelé");
         voitureService = new VoitureService();
+        
+        // Ajouter l'EventHandler manuellement pour le bouton actualiser
+        if (refreshButton != null) {
+            refreshButton.setOnAction(event -> handleRefresh());
+        }
+        
         loadVoitures();
     }
 
@@ -44,15 +52,10 @@ public class UserDashboardController {
             return;
         }
         
-        HBox currentRow = null;
-        for (int i = 0; i < voitures.size(); i++) {
-            System.out.println("Création carte pour: " + voitures.get(i).getMarque() + " " + voitures.get(i).getModele());
-            if (i % 2 == 0) {
-                currentRow = new HBox(20.0);
-                currentRow.setAlignment(Pos.CENTER);
-                voituresContainer.getChildren().add(currentRow);
-            }
-            currentRow.getChildren().add(createVoitureCard(voitures.get(i)));
+        for (Voiture voiture : voitures) {
+            System.out.println("Création carte pour: " + voiture.getMarque() + " " + voiture.getModele());
+            VBox card = createVoitureCard(voiture);
+            voituresContainer.getChildren().add(card);
         }
     }
 
@@ -60,6 +63,8 @@ public class UserDashboardController {
         VBox card = new VBox(15.0);
         card.setAlignment(Pos.CENTER);
         card.setMaxWidth(280.0);
+        card.setMinWidth(200.0);
+        card.setPrefWidth(250.0);
         card.setPadding(new Insets(20));
         card.setStyle("-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 15, 0, 0, 5);");
         
@@ -71,8 +76,8 @@ public class UserDashboardController {
             
             if (!image.isError()) {
                 ImageView imageView = new ImageView(image);
-                imageView.setFitHeight(120.0);
-                imageView.setFitWidth(200.0);
+                imageView.setFitHeight(100.0);
+                imageView.setFitWidth(180.0);
                 imageView.setPreserveRatio(true);
                 card.getChildren().add(imageView);
                 System.out.println("Image chargée avec succès: " + imagePath);
@@ -82,31 +87,34 @@ public class UserDashboardController {
         } catch (Exception e) {
             System.out.println("Erreur chargement image: " + e.getMessage());
             Label carIcon = new Label("🚗");
-            carIcon.setStyle("-fx-font-size: 60px;");
+            carIcon.setStyle("-fx-font-size: 50px;");
             card.getChildren().add(carIcon);
         }
         
         // Informations
         Label nomLabel = new Label(voiture.getMarque() + " " + voiture.getModele());
-        nomLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+        nomLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+        nomLabel.setMaxWidth(Double.MAX_VALUE);
+        nomLabel.setAlignment(Pos.CENTER);
         
         Label statutLabel = new Label(voiture.getDisponible() ? "DISPONIBLE" : "NON DISPONIBLE");
         statutLabel.setStyle(voiture.getDisponible() ? 
-            "-fx-background-color: #56ab2f; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 5 15; -fx-background-radius: 20; -fx-font-size: 12px;" :
-            "-fx-background-color: #ff416c; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 5 15; -fx-background-radius: 20; -fx-font-size: 12px;");
+            "-fx-background-color: #56ab2f; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 3 10; -fx-background-radius: 15; -fx-font-size: 10px;" :
+            "-fx-background-color: #ff416c; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 3 10; -fx-background-radius: 15; -fx-font-size: 10px;");
         
         Label prixLabel = new Label(voiture.getTauxJournalier() + "€/jour");
-        prixLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: #667eea; -fx-font-weight: bold;");
+        prixLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #667eea; -fx-font-weight: bold;");
         
         Button reserverBtn = new Button(voiture.getDisponible() ? "📅 Réserver" : "❌ Indisponible");
-        reserverBtn.setPrefWidth(200.0);
+        reserverBtn.setMaxWidth(Double.MAX_VALUE);
+        reserverBtn.setPrefHeight(35.0);
         reserverBtn.setDisable(!voiture.getDisponible());
         
         if (voiture.getDisponible()) {
-            reserverBtn.setStyle("-fx-background-color: linear-gradient(to right, #667eea, #764ba2); -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 25; -fx-padding: 12 20;");
+            reserverBtn.setStyle("-fx-background-color: linear-gradient(to right, #667eea, #764ba2); -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 20;");
             reserverBtn.setOnAction(e -> handleReserver(voiture));
         } else {
-            reserverBtn.setStyle("-fx-background-color: #bdc3c7; -fx-text-fill: #7f8c8d; -fx-font-size: 14px; -fx-background-radius: 25; -fx-padding: 12 20;");
+            reserverBtn.setStyle("-fx-background-color: #bdc3c7; -fx-text-fill: #7f8c8d; -fx-font-size: 12px; -fx-background-radius: 20;");
         }
         
         card.getChildren().addAll(nomLabel, statutLabel, prixLabel, reserverBtn);
@@ -114,7 +122,7 @@ public class UserDashboardController {
     }
 
     @FXML
-    private void handleRefresh() {
+    public void handleRefresh() {
         System.out.println("Actualisation des voitures...");
         loadVoitures();
     }

@@ -58,7 +58,18 @@ public class MainApp extends Application {
             Parent root = loader.load();
             
             primaryStage.setTitle("Location de Voitures");
-            primaryStage.setScene(new Scene(root, 1200, 800));
+            primaryStage.setScene(new Scene(root, 1000, 700));
+            primaryStage.setResizable(true);
+            
+            // Gérer la restauration de la fenêtre maximisée
+            primaryStage.maximizedProperty().addListener((obs, wasMaximized, isNowMaximized) -> {
+                if (!isNowMaximized && wasMaximized) {
+                    // Quand on restaure depuis maximisé, repositionner la fenêtre
+                    primaryStage.setX(50);
+                    primaryStage.setY(50);
+                }
+            });
+            
             primaryStage.show();
         } catch (Exception e) {
             System.err.println("ERROR loading UserDashboard: " + e.getMessage());

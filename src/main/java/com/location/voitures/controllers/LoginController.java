@@ -72,7 +72,18 @@ public class LoginController {
             
             Stage stage = new Stage();
             stage.setTitle("Administration - Gestion des Voitures");
-            stage.setScene(new Scene(root, 1200, 800));
+            stage.setScene(new Scene(root, 1000, 700));
+            stage.setResizable(true);
+            
+            // Gérer la restauration de la fenêtre maximisée
+            stage.maximizedProperty().addListener((obs, wasMaximized, isNowMaximized) -> {
+                if (!isNowMaximized && wasMaximized) {
+                    // Quand on restaure depuis maximisé, repositionner la fenêtre
+                    stage.setX(50);
+                    stage.setY(50);
+                }
+            });
+            
             stage.show();
             System.out.println("AdminDashboard ouvert avec succès");
         } catch (Exception e) {
