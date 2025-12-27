@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 public class AdminDashboardController {
 
@@ -63,31 +64,6 @@ public class AdminDashboardController {
             System.out.println("reservationsBtn: " + (reservationsBtn != null));
             System.out.println("mainContent: " + (mainContent != null));
             
-            // Ajout d'un event handler explicite pour le bouton réservations
-            if (reservationsBtn != null) {
-                System.out.println("reservationsBtn isVisible: " + reservationsBtn.isVisible());
-                System.out.println("reservationsBtn isDisabled: " + reservationsBtn.isDisabled());
-                reservationsBtn.setOnAction(event -> {
-                    System.out.println("Clic manuel sur bouton réservations détecté - event handler");
-                    showGestionReservations();
-                });
-                System.out.println("Event handler ajouté au bouton réservations");
-            }
-            
-            // Test des autres boutons
-            if (gestionVoituresBtn != null) {
-                gestionVoituresBtn.setOnAction(event -> {
-                    System.out.println("Clic manuel sur bouton voitures détecté");
-                    showGestionVoitures();
-                });
-            }
-            if (gestionUsersBtn != null) {
-                gestionUsersBtn.setOnAction(event -> {
-                    System.out.println("Clic manuel sur bouton utilisateurs détecté");
-                    showGestionUsers();
-                });
-            }
-            
             System.out.println("AdminDashboard initialisé avec succès");
         } catch (Exception e) {
             System.out.println("Erreur initialisation AdminDashboard: " + e.getMessage());
@@ -96,9 +72,11 @@ public class AdminDashboardController {
     }
     
     private void createInitialContent() {
-        if (!mainContent.getChildren().isEmpty()) {
-            gestionVoituresContent = (VBox) mainContent.getChildren().get(0);
+        // Créer le contenu initial dynamiquement
+        if (gestionVoituresContent == null) {
+            gestionVoituresContent = createGestionVoituresContent();
         }
+        showContent(gestionVoituresContent);
         updateButtonStyles(gestionVoituresBtn);
     }
 
@@ -130,6 +108,10 @@ public class AdminDashboardController {
 
     @FXML
     private void selectImage() {
+        selectImage(imagePathField);
+    }
+
+    private void selectImage(TextField imagePathFieldLocal) {
         System.out.println("selectImage() appelé");
         try {
             FileChooser fileChooser = new FileChooser();
@@ -138,12 +120,20 @@ public class AdminDashboardController {
                 new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif")
             );
             
-            Stage stage = (Stage) imagePathField.getScene().getWindow();
+            // Trouver la fenêtre actuelle
+            Stage stage = null;
+            if (imagePathFieldLocal.getScene() != null) {
+                stage = (Stage) imagePathFieldLocal.getScene().getWindow();
+            } else {
+                // Fallback: chercher une fenêtre active
+                stage = new Stage();
+            }
+            
             File selectedFile = fileChooser.showOpenDialog(stage);
             
             if (selectedFile != null) {
                 selectedImagePath = selectedFile.getAbsolutePath();
-                imagePathField.setText(selectedFile.getName());
+                imagePathFieldLocal.setText(selectedFile.getName());
                 System.out.println("Image sélectionnée: " + selectedImagePath);
             }
         } catch (Exception e) {
@@ -154,21 +144,26 @@ public class AdminDashboardController {
 
     @FXML
     private void ajouterVoiture() {
+        ajouterVoiture(marqueField, modeleField, anneeField, immatriculationField, prixField, imagePathField);
+    }
+
+    private void ajouterVoiture(TextField marqueFieldLocal, TextField modeleFieldLocal, TextField anneeFieldLocal,
+                               TextField immatFieldLocal, TextField prixFieldLocal, TextField imagePathFieldLocal) {
         System.out.println("ajouterVoiture() appelé");
         try {
-            if (marqueField.getText().isEmpty() || modeleField.getText().isEmpty()) {
+            if (marqueFieldLocal.getText().isEmpty() || modeleFieldLocal.getText().isEmpty()) {
                 showAlert("Erreur", "Veuillez remplir au moins la marque et le modèle.");
                 return;
             }
             
-            String imageName = copyImageToResources();
+            String imageName = copyImageToResources(marqueFieldLocal.getText(), modeleFieldLocal.getText());
             
             Voiture voiture = new Voiture(
-                marqueField.getText(),
-                modeleField.getText(),
-                Integer.parseInt(anneeField.getText().isEmpty() ? "2020" : anneeField.getText()),
-                immatriculationField.getText().isEmpty() ? "XX-000-XX" : immatriculationField.getText(),
-                Double.parseDouble(prixField.getText().isEmpty() ? "50.0" : prixField.getText()),
+                marqueFieldLocal.getText(),
+                modeleFieldLocal.getText(),
+                Integer.parseInt(anneeFieldLocal.getText().isEmpty() ? "2020" : anneeFieldLocal.getText()),
+                immatFieldLocal.getText().isEmpty() ? "XX-000-XX" : immatFieldLocal.getText(),
+                Double.parseDouble(prixFieldLocal.getText().isEmpty() ? "50.0" : prixFieldLocal.getText()),
                 true
             );
             
@@ -189,21 +184,26 @@ public class AdminDashboardController {
 
     @FXML
     private void modifierVoiture() {
-        Voiture selected = voituresTable.getSelectionModel().getSelectedItem();
+        modifierVoiture(marqueField, modeleField, anneeField, immatriculationField, prixField, voituresTable);
+    }
+
+    private void modifierVoiture(TextField marqueFieldLocal, TextField modeleFieldLocal, TextField anneeFieldLocal,
+                                TextField immatFieldLocal, TextField prixFieldLocal, TableView<Voiture> voituresTableLocal) {
+        Voiture selected = voituresTableLocal.getSelectionModel().getSelectedItem();
         if (selected == null) {
             showAlert("Erreur", "Veuillez sélectionner une voiture à modifier.");
             return;
         }
         
         try {
-            selected.setMarque(marqueField.getText());
-            selected.setModele(modeleField.getText());
-            selected.setAnnee(Integer.parseInt(anneeField.getText()));
-            selected.setImmatriculation(immatriculationField.getText());
-            selected.setTauxJournalier(Double.parseDouble(prixField.getText()));
+            selected.setMarque(marqueFieldLocal.getText());
+            selected.setModele(modeleFieldLocal.getText());
+            selected.setAnnee(Integer.parseInt(anneeFieldLocal.getText()));
+            selected.setImmatriculation(immatFieldLocal.getText());
+            selected.setTauxJournalier(Double.parseDouble(prixFieldLocal.getText()));
             
             if (selectedImagePath != null) {
-                copyImageToResources();
+                copyImageToResources(marqueFieldLocal.getText(), modeleFieldLocal.getText());
             }
             
             voitureService.updateVoiture(selected);
@@ -218,21 +218,32 @@ public class AdminDashboardController {
 
     @FXML
     private void supprimerVoiture() {
-        Voiture selected = voituresTable.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            showAlert("Erreur", "Veuillez sélectionner une voiture à supprimer.");
-            return;
-        }
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Supprimer une voiture");
+        dialog.setHeaderText("Entrez l'immatriculation de la voiture à supprimer");
+        dialog.setContentText("Immatriculation:");
         
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Confirmation");
-        confirm.setContentText("Êtes-vous sûr de vouloir supprimer cette voiture ?");
-        
-        if (confirm.showAndWait().get() == ButtonType.OK) {
-            voitureService.deleteVoiture(selected.getId());
-            loadVoitures();
-            clearFields();
-            showAlert("Succès", "Voiture supprimée avec succès !");
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent() && !result.get().trim().isEmpty()) {
+            String immatriculation = result.get().trim();
+            
+            Optional<Voiture> voitureOpt = voitureService.findByImmatriculation(immatriculation);
+            if (voitureOpt.isPresent()) {
+                Voiture voiture = voitureOpt.get();
+                
+                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                confirm.setTitle("Confirmation");
+                confirm.setContentText("Êtes-vous sûr de vouloir supprimer la voiture " + voiture.getMarque() + " " + voiture.getModele() + " (immatriculation: " + immatriculation + ") ?");
+                
+                if (confirm.showAndWait().get() == ButtonType.OK) {
+                    voitureService.deleteVoiture(voiture.getId());
+                    loadVoitures();
+                    clearFields();
+                    showAlert("Succès", "Voiture supprimée avec succès !");
+                }
+            } else {
+                showAlert("Erreur", "Aucune voiture trouvée avec l'immatriculation: " + immatriculation);
+            }
         }
     }
 
@@ -248,6 +259,8 @@ public class AdminDashboardController {
     @FXML
     private void showGestionVoitures() {
         System.out.println("showGestionVoitures() appelé");
+        // Créer le contenu voitures dynamiquement à chaque fois pour éviter les problèmes de références @FXML
+        gestionVoituresContent = createGestionVoituresContent();
         showContent(gestionVoituresContent);
         updateButtonStyles(gestionVoituresBtn);
     }
@@ -313,6 +326,19 @@ public class AdminDashboardController {
         return fileName;
     }
 
+    private String copyImageToResources(String marque, String modele) throws IOException {
+        if (selectedImagePath == null) return null;
+        
+        File sourceFile = new File(selectedImagePath);
+        String fileName = marque.toLowerCase() + "_" + modele.toLowerCase() + ".jpg";
+        
+        Path targetPath = Paths.get("src/main/resources/images/" + fileName);
+        Files.createDirectories(targetPath.getParent());
+        Files.copy(sourceFile.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+        
+        return fileName;
+    }
+
     private void fillFields(Voiture voiture) {
         marqueField.setText(voiture.getMarque());
         modeleField.setText(voiture.getModele());
@@ -329,6 +355,149 @@ public class AdminDashboardController {
         prixField.clear();
         imagePathField.clear();
         selectedImagePath = null;
+    }
+
+    private VBox createGestionVoituresContent() {
+        System.out.println("Création du contenu de gestion des voitures");
+        VBox content = new VBox(20);
+        content.setPadding(new Insets(20));
+        content.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);");
+
+        // Formulaire d'ajout de voiture
+        VBox formBox = new VBox(15);
+        Label formTitle = new Label("Ajouter une voiture");
+        formTitle.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+
+        HBox row1 = new HBox(15);
+        VBox col1 = new VBox(5);
+        Label marqueLabel = new Label("Marque :");
+        TextField marqueFieldLocal = new TextField();
+        marqueFieldLocal.setPrefWidth(150);
+        col1.getChildren().addAll(marqueLabel, marqueFieldLocal);
+
+        VBox col2 = new VBox(5);
+        Label modeleLabel = new Label("Modèle :");
+        TextField modeleFieldLocal = new TextField();
+        modeleFieldLocal.setPrefWidth(150);
+        col2.getChildren().addAll(modeleLabel, modeleFieldLocal);
+
+        VBox col3 = new VBox(5);
+        Label anneeLabel = new Label("Année :");
+        TextField anneeFieldLocal = new TextField();
+        anneeFieldLocal.setPrefWidth(100);
+        col3.getChildren().addAll(anneeLabel, anneeFieldLocal);
+
+        row1.getChildren().addAll(col1, col2, col3);
+
+        HBox row2 = new HBox(15);
+        VBox col4 = new VBox(5);
+        Label immatLabel = new Label("Immatriculation :");
+        TextField immatFieldLocal = new TextField();
+        immatFieldLocal.setPrefWidth(150);
+        col4.getChildren().addAll(immatLabel, immatFieldLocal);
+
+        VBox col5 = new VBox(5);
+        Label prixLabel = new Label("Prix/jour (€) :");
+        TextField prixFieldLocal = new TextField();
+        prixFieldLocal.setPrefWidth(100);
+        col5.getChildren().addAll(prixLabel, prixFieldLocal);
+
+        VBox col6 = new VBox(5);
+        Label imageLabel = new Label("Image :");
+        HBox imageBox = new HBox(10);
+        TextField imagePathFieldLocal = new TextField();
+        imagePathFieldLocal.setPrefWidth(200);
+        imagePathFieldLocal.setEditable(false);
+        Button selectImageBtnLocal = new Button("Choisir...");
+        imageBox.getChildren().addAll(imagePathFieldLocal, selectImageBtnLocal);
+        col6.getChildren().addAll(imageLabel, imageBox);
+
+        row2.getChildren().addAll(col4, col5, col6);
+
+        HBox buttonRow = new HBox(10);
+        Button ajouterBtnLocal = new Button("Ajouter");
+        ajouterBtnLocal.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-padding: 10 20;");
+        Button modifierBtnLocal = new Button("Modifier");
+        modifierBtnLocal.setStyle("-fx-background-color: #f39c12; -fx-text-fill: white; -fx-padding: 10 20;");
+        Button supprimerBtnLocal = new Button("Supprimer");
+        supprimerBtnLocal.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 10 20;");
+        buttonRow.getChildren().addAll(ajouterBtnLocal, modifierBtnLocal, supprimerBtnLocal);
+
+        formBox.getChildren().addAll(formTitle, row1, row2, buttonRow);
+
+        // Tableau des voitures
+        TableView<Voiture> voituresTableLocal = new TableView<>();
+        voituresTableLocal.setPrefHeight(400);
+
+        TableColumn<Voiture, Long> idColLocal = new TableColumn<>("ID");
+        idColLocal.setCellValueFactory(new PropertyValueFactory<>("id"));
+        idColLocal.setPrefWidth(50);
+
+        TableColumn<Voiture, String> marqueColLocal = new TableColumn<>("Marque");
+        marqueColLocal.setCellValueFactory(new PropertyValueFactory<>("marque"));
+        marqueColLocal.setPrefWidth(100);
+
+        TableColumn<Voiture, String> modeleColLocal = new TableColumn<>("Modèle");
+        modeleColLocal.setCellValueFactory(new PropertyValueFactory<>("modele"));
+        modeleColLocal.setPrefWidth(100);
+
+        TableColumn<Voiture, Integer> anneeColLocal = new TableColumn<>("Année");
+        anneeColLocal.setCellValueFactory(new PropertyValueFactory<>("annee"));
+        anneeColLocal.setPrefWidth(80);
+
+        TableColumn<Voiture, String> immatriculationColLocal = new TableColumn<>("Immatriculation");
+        immatriculationColLocal.setCellValueFactory(new PropertyValueFactory<>("immatriculation"));
+        immatriculationColLocal.setPrefWidth(120);
+
+        TableColumn<Voiture, Double> prixColLocal = new TableColumn<>("Prix/jour");
+        prixColLocal.setCellValueFactory(new PropertyValueFactory<>("tauxJournalier"));
+        prixColLocal.setPrefWidth(80);
+
+        TableColumn<Voiture, Boolean> disponibleColLocal = new TableColumn<>("Disponible");
+        disponibleColLocal.setCellValueFactory(new PropertyValueFactory<>("disponible"));
+        disponibleColLocal.setPrefWidth(80);
+
+        voituresTableLocal.getColumns().addAll(idColLocal, marqueColLocal, modeleColLocal, anneeColLocal,
+                                               immatriculationColLocal, prixColLocal, disponibleColLocal);
+
+        // Charger les voitures et lier le tableau
+        loadVoitures();
+        voituresTableLocal.setItems(voituresList);
+
+        // Gestionnaire de sélection
+        voituresTableLocal.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                // Remplir les champs du formulaire avec les données de la voiture sélectionnée
+                marqueFieldLocal.setText(newSelection.getMarque());
+                modeleFieldLocal.setText(newSelection.getModele());
+                anneeFieldLocal.setText(newSelection.getAnnee() != null ? newSelection.getAnnee().toString() : "");
+                immatFieldLocal.setText(newSelection.getImmatriculation());
+                prixFieldLocal.setText(newSelection.getTauxJournalier() != null ? newSelection.getTauxJournalier().toString() : "");
+            }
+        });
+
+        // Event handlers pour les boutons
+        ajouterBtnLocal.setOnAction(e -> {
+            ajouterVoiture(marqueFieldLocal, modeleFieldLocal, anneeFieldLocal, immatFieldLocal, prixFieldLocal, imagePathFieldLocal);
+            loadVoitures();
+            voituresTableLocal.refresh();
+        });
+
+        modifierBtnLocal.setOnAction(e -> {
+            modifierVoiture(marqueFieldLocal, modeleFieldLocal, anneeFieldLocal, immatFieldLocal, prixFieldLocal, voituresTableLocal);
+            loadVoitures();
+            voituresTableLocal.refresh();
+        });
+
+        supprimerBtnLocal.setOnAction(e -> supprimerVoiture());
+
+        selectImageBtnLocal.setOnAction(e -> {
+            selectImage(imagePathFieldLocal);
+        });
+
+        content.getChildren().addAll(formBox, voituresTableLocal);
+        System.out.println("Contenu de gestion des voitures créé avec " + voituresList.size() + " voitures");
+        return content;
     }
 
     private VBox createGestionUsersContent() {

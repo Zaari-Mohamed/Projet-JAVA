@@ -44,6 +44,15 @@ public class VoitureService {
     }
 
     /**
+     * Récupère une voiture par son immatriculation.
+     * @param immatriculation L'immatriculation de la voiture
+     * @return Optional contenant la voiture si trouvée, sinon Optional vide
+     */
+    public Optional<Voiture> findByImmatriculation(String immatriculation) {
+        return voitureDAO.findByImmatriculation(immatriculation);
+    }
+
+    /**
      * Sauvegarde une nouvelle voiture.
      * @param voiture La voiture à sauvegarder
      * @return La voiture sauvegardée avec son ID généré

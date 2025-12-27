@@ -72,17 +72,25 @@ public class UserDashboardController {
         try {
             String imagePath = "/images/" + voiture.getMarque().toLowerCase() + "_" + voiture.getModele().toLowerCase() + ".jpg";
             System.out.println("Tentative de chargement: " + imagePath);
-            Image image = new Image(getClass().getResourceAsStream(imagePath));
-            
-            if (!image.isError()) {
-                ImageView imageView = new ImageView(image);
-                imageView.setFitHeight(100.0);
-                imageView.setFitWidth(180.0);
-                imageView.setPreserveRatio(true);
-                card.getChildren().add(imageView);
-                System.out.println("Image chargée avec succès: " + imagePath);
+            java.net.URL resourceUrl = getClass().getResource(imagePath);
+            if (resourceUrl != null) {
+                java.nio.file.Path filePath = java.nio.file.Paths.get(resourceUrl.toURI());
+                byte[] imageBytes = java.nio.file.Files.readAllBytes(filePath);
+                Image image = new Image(new java.io.ByteArrayInputStream(imageBytes));
+                
+                if (!image.isError()) {
+                    ImageView imageView = new ImageView(image);
+                    imageView.setFitHeight(100.0);
+                    imageView.setFitWidth(180.0);
+                    imageView.setPreserveRatio(true);
+                    card.getChildren().add(imageView);
+                    System.out.println("Image chargée avec succès: " + imagePath);
+                } else {
+                    System.out.println("Erreur Image: " + image.getException());
+                    throw new Exception("Image error");
+                }
             } else {
-                throw new Exception("Image error");
+                throw new Exception("Resource not found");
             }
         } catch (Exception e) {
             System.out.println("Erreur chargement image: " + e.getMessage());
