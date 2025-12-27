@@ -17,8 +17,8 @@ public class Reservation implements Serializable {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "utilisateur_id", nullable = false)
-    private Utilisateur utilisateur;
+    @JoinColumn(name = "admin_id", nullable = false)
+    private Admin admin;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "voiture_id", nullable = false)
@@ -48,9 +48,9 @@ public class Reservation implements Serializable {
     }
 
     // Ce constructeur permet de créer une réservation avec un statut spécifié
-    public Reservation(Utilisateur utilisateur, Voiture voiture, LocalDateTime dateDebut, LocalDateTime dateFin,
+    public Reservation(Admin admin, Voiture voiture, LocalDateTime dateDebut, LocalDateTime dateFin,
             Double coutTotal, StatutReservation statut) {
-        this.utilisateur = utilisateur;
+        this.admin = admin;
         this.voiture = voiture;
         this.dateDebut = dateDebut;
         this.dateFin = dateFin;
@@ -59,10 +59,11 @@ public class Reservation implements Serializable {
     }
 
     // Constructeur souvent utilisé pour la création initiale
-    public Reservation(Utilisateur utilisateur, Voiture voiture, LocalDateTime dateDebut, LocalDateTime dateFin,
+    public Reservation(Admin admin, Voiture voiture, LocalDateTime dateDebut, LocalDateTime dateFin,
             Double coutTotal) {
-        this(utilisateur, voiture, dateDebut, dateFin, coutTotal, StatutReservation.EN_ATTENTE);
+        this(admin, voiture, dateDebut, dateFin, coutTotal, StatutReservation.EN_ATTENTE);
     }
+
 
     // Getters et Setters
     public Long getId() {
@@ -73,12 +74,12 @@ public class Reservation implements Serializable {
         this.id = id;
     }
 
-    public Utilisateur getUtilisateur() {
-        return utilisateur;
+    public Admin getAdmin() {
+        return admin;
     }
 
-    public void setUtilisateur(Utilisateur utilisateur) {
-        this.utilisateur = utilisateur;
+    public void setAdmin(Admin admin) {
+        this.admin = admin;
     }
 
     public Voiture getVoiture() {
@@ -120,4 +121,14 @@ public class Reservation implements Serializable {
     public void setStatut(StatutReservation statut) {
         this.statut = statut;
     }
+
+	
+	public void ajouter(){
+		new ReservationDAO().save(this);;
+	}
+
+	public void supprimer(){
+		new ReservationDAO().delete(this);;
+	}
+
 }

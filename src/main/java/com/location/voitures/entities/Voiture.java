@@ -66,6 +66,14 @@ public class Voiture implements Serializable {
     public Set<Reservation> getReservations() { return reservations; }
     public void setReservations(Set<Reservation> reservations) { this.reservations = reservations; }
     
+	public void ajouter(){
+		new VoitureDAO().save(this);;
+	}
+
+	public void supprimer(){
+		new Voiture().delete(this);;
+	}
+
     // Méthode utilitaire pour ajouter une réservation
     public void addReservation(Reservation reservation) {
         this.reservations.add(reservation);
