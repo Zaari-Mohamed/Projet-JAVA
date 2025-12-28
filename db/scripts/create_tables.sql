@@ -57,17 +57,7 @@ CREATE TABLE IF NOT EXISTS reservations (
     FOREIGN KEY (voiture_id) REFERENCES voitures(id) ON DELETE CASCADE
 );
 
--- Table des paiements
-CREATE TABLE IF NOT EXISTS paiements (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    reservation_id BIGINT NOT NULL,
-    montant DECIMAL(10,2) NOT NULL,
-    methode_paiement VARCHAR(50) NOT NULL,
-    statut_paiement VARCHAR(20) DEFAULT 'EN_ATTENTE',
-    date_paiement TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    reference_transaction VARCHAR(100),
-    FOREIGN KEY (reservation_id) REFERENCES reservations(id) ON DELETE CASCADE
-);
+
 
 -- Index pour améliorer les performances
 CREATE INDEX idx_utilisateur_email ON utilisateurs(email);

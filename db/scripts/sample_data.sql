@@ -28,8 +28,3 @@ INSERT INTO reservations (utilisateur_id, voiture_id, date_debut, date_fin, prix
 (2, 3, '2024-01-18', '2024-01-22', 120.00, 'EN_COURS'),
 (3, 4, '2024-01-25', '2024-01-30', 400.00, 'EN_ATTENTE');
 
--- Insertion de paiements d'exemple
-INSERT INTO paiements (reservation_id, montant, methode_paiement, statut_paiement, reference_transaction) VALUES
-(1, 175.00, 'CARTE_BANCAIRE', 'PAYE', 'TXN_001_2024'),
-(2, 120.00, 'PAYPAL', 'PAYE', 'TXN_002_2024'),
-(3, 400.00, 'CARTE_BANCAIRE', 'EN_ATTENTE', 'TXN_003_2024');

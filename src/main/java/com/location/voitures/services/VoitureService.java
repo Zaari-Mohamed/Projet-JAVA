@@ -1,23 +1,16 @@
 package com.location.voitures.services;
-
 import com.location.voitures.dao.VoitureDAO;
 import com.location.voitures.entities.Voiture;
-
 import java.util.List;
 import java.util.Optional;
-
 public class VoitureService {
-
     private final VoitureDAO voitureDAO;
-
     public VoitureService() {
         this.voitureDAO = new VoitureDAO();
     }
-
     public VoitureService(VoitureDAO voitureDAO) {
         this.voitureDAO = voitureDAO;
     }
-
     /**
      * Récupère toutes les voitures disponibles.
      * @return Liste des voitures disponibles, ou une liste vide si aucune n'est disponible.
@@ -25,7 +18,6 @@ public class VoitureService {
     public List<Voiture> findAllAvailable() {
         return voitureDAO.findAvailableCars();
     }
-
     /**
      * Récupère une voiture par son ID.
      * @param id L'ID de la voiture
@@ -34,7 +26,6 @@ public class VoitureService {
     public Optional<Voiture> findById(Long id) {
         return voitureDAO.findById(id);
     }
-
     /**
      * Récupère toutes les voitures.
      * @return Liste de toutes les voitures
@@ -42,7 +33,6 @@ public class VoitureService {
     public List<Voiture> findAll() {
         return voitureDAO.findAll();
     }
-
     /**
      * Récupère une voiture par son immatriculation.
      * @param immatriculation L'immatriculation de la voiture
@@ -51,7 +41,6 @@ public class VoitureService {
     public Optional<Voiture> findByImmatriculation(String immatriculation) {
         return voitureDAO.findByImmatriculation(immatriculation);
     }
-
     /**
      * Sauvegarde une nouvelle voiture.
      * @param voiture La voiture à sauvegarder
@@ -61,7 +50,6 @@ public class VoitureService {
         voitureDAO.save(voiture);
         return voiture;
     }
-
     /**
      * Met à jour une voiture existante.
      * @param voiture La voiture à mettre à jour
@@ -69,7 +57,6 @@ public class VoitureService {
     public void updateVoiture(Voiture voiture) {
         voitureDAO.update(voiture);
     }
-
     /**
      * Supprime une voiture par son ID.
      * @param id L'ID de la voiture à supprimer
@@ -78,7 +65,6 @@ public class VoitureService {
         Optional<Voiture> voitureOpt = voitureDAO.findById(id);
         voitureOpt.ifPresent(voiture -> voitureDAO.delete(voiture));
     }
-
     /**
      * Rend une voiture disponible.
      * @param id L'ID de la voiture
@@ -90,7 +76,6 @@ public class VoitureService {
             voitureDAO.update(voiture);
         });
     }
-
     /**
      * Rend une voiture indisponible.
      * @param id L'ID de la voiture

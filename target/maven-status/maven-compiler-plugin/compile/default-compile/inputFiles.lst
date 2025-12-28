@@ -14,14 +14,11 @@ C:\Users\rida\newjava\Projet-JAVA\src\main\java\com\location\voitures\entities\V
 C:\Users\rida\newjava\Projet-JAVA\src\main\java\com\location\voitures\ui\AdminPanelLoginDialog.java
 C:\Users\rida\newjava\Projet-JAVA\src\main\java\com\location\voitures\ui\ReservationDialog.java
 C:\Users\rida\newjava\Projet-JAVA\src\main\java\com\location\voitures\services\AuthService.java
-C:\Users\rida\newjava\Projet-JAVA\src\main\java\com\location\voitures\services\PaymentService.java
 C:\Users\rida\newjava\Projet-JAVA\src\main\java\com\location\voitures\test\DatabaseTest.java
 C:\Users\rida\newjava\Projet-JAVA\src\main\java\com\location\voitures\ui\AddVoitureDialog.java
 C:\Users\rida\newjava\Projet-JAVA\src\main\java\com\location\voitures\MainApp.java
-C:\Users\rida\newjava\Projet-JAVA\src\main\java\com\location\voitures\entities\Paiement.java
 C:\Users\rida\newjava\Projet-JAVA\src\main\java\com\location\voitures\dao\GenericDAO.java
 C:\Users\rida\newjava\Projet-JAVA\src\main\java\com\location\voitures\services\ReservationService.java
-C:\Users\rida\newjava\Projet-JAVA\src\main\java\com\location\voitures\dao\PaiementDAO.java
 C:\Users\rida\newjava\Projet-JAVA\src\main\java\com\location\voitures\controllers\UserDashboardController.java
 C:\Users\rida\newjava\Projet-JAVA\src\main\java\com\location\voitures\controllers\LoginController.java
 C:\Users\rida\newjava\Projet-JAVA\src\main\java\com\location\voitures\ui\AdminInterface.java

@@ -17,8 +17,7 @@ location-voitures/
 │  │   │         │    ├─ Utilisateur.java           // Membre 1 (structure générale)
 │  │   │         │    ├─ Admin.java                 // Membre 2
 │  │   │         │    ├─ Superviseur.java           // Membre 2
-│  │   │         │    ├─ Reservation.java           // Membre 2
-│  │   │         │    └─ Paiement.java              // Membre 2
+│  │   │         │    └─ Reservation.java           // Membre 2
 │  │   │         │
 │  │   │         ├─ dao/
 │  │   │         │    ├─ GenericDAO.java            // Membre 2
@@ -28,8 +27,7 @@ location-voitures/
 │  │   │         │
 │  │   │         ├─ services/
 │  │   │         │    ├─ AuthService.java           // Membre 2
-│  │   │         │    ├─ ReservationService.java    // Membre 2
-│  │   │         │    └─ PaymentService.java        // Membre 2
+│  │   │         │    └─ ReservationService.java    // Membre 2
 │  │   │         │
 │  │   │         ├─ controllers/
 │  │   │         │    ├─ LoginController.java       // Membre 5
@@ -77,7 +75,7 @@ location-voitures/
 
 - **DAO (Data Access Objects)** (Membre 2) : Gestion de l'accès aux données dans la base de données. Ce module contient les classes pour interagir avec la base de données (par exemple, `VoitureDAO`, `UtilisateurDAO`).
 
-- **Services** (Membre 2) : Fournit la logique métier pour la gestion des utilisateurs, des réservations, et des paiements, par exemple via des classes comme `AuthService`, `ReservationService`, etc.
+- **Services** (Membre 2) : Fournit la logique métier pour la gestion des utilisateurs et des réservations, par exemple via des classes comme `AuthService`, `ReservationService`, etc.
 
 - **Contrôleurs JavaFX** (Membre 5) : Contient les contrôleurs qui gèrent les interactions utilisateur dans l'interface graphique avec JavaFX, comme `LoginController` et `AdminDashboardController`.
 
@@ -93,4 +91,3 @@ location-voitures/
 - **Utilisateur** : Utilisateur général de l'application, qui peut effectuer des réservations.
 - **Admin / Superviseur** : Rôles d'administrateur et de superviseur, avec des privilèges différents.
 - **Reservation** : Liée à un utilisateur et une voiture.
-- **Paiement** : Associe une réservation à un paiement effectué.
